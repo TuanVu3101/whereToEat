@@ -1,0 +1,27 @@
+.nav {
+    background-color: transparent;
+}
+
+.nav .logo {
+    height: 80px;
+    width: 150px;
+    padding: 15px;
+}
+
+.nav .NavLink {
+   width: 10%;
+   height: 80px;
+   line-height: 60px;
+   float: right;
+   padding: 10px;
+   text-decoration: none;
+   text-align: center;
+   font-size: 18px;
+   color: white;
+   background-color: #841B1B;
+   border: 1px solid #590E0E;
+}
+
+.nav .NavLink:hover {
+  color: black;
+}
