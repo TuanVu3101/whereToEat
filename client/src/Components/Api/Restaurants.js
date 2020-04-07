@@ -7,7 +7,7 @@ export default class Restaurants extends Component {
     super();
     this.state = {
       restaurants: [],
-      favourites:[],
+      favourites: [],
       isLoading: false,
       error: null,
       index: 0,
@@ -19,14 +19,19 @@ export default class Restaurants extends Component {
   }
 
   componentDidMount() {
-    let messagesRef = app.database().ref('messages').orderByKey().limitToLast(100);
-    messagesRef.on('child_added', snapshot => {
+    let messagesRef = app
+      .database()
+      .ref("messages")
+      .orderByKey()
+      .limitToLast(100);
+    messagesRef.on("child_added", snapshot => {
       let message = { text: snapshot.val(), id: snapshot.key };
       this.setState({ messages: [message].concat(this.state.messages) });
-    })
+    });
     let self = this;
     navigator.geolocation.watchPosition(
       function(position) {
+        console.log("dasdsad", position);
         self.setState({
           enableHighAccuracy: true,
           location: {
@@ -45,30 +50,31 @@ export default class Restaurants extends Component {
     });
     fetch(
       "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" +
-      self.state.location.lat +
-      "," +
-      self.state.location.long +
-      "&radius=500&type=restaurant&key=AIzaSyDGgNbzA8m2lzd9ijxaGPhmoe-oVTr7nDk"
+        self.state.location.lat +
+        "," +
+        self.state.location.long +
+        "&radius=500&type=restaurant&key=AIzaSyDR_ebrqEMDPaojtmWCxesAQy-FHcNffvo"
     )
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error("Sorry, something went wrong");
-      }
-    })
-    .then(data =>
-      this.setState({
-        restaurants: data.results,
-        isLoading: false
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Sorry, something went wrong");
+        }
       })
-    )
-    .catch(error =>
-      this.setState({
-        error: null,
-        isLoading: false
+      .then(data => {
+        console.log("datra", data);
+        this.setState({
+          restaurants: data.results,
+          isLoading: false
+        });
       })
-    );
+      .catch(error =>
+        this.setState({
+          error: null,
+          isLoading: false
+        })
+      );
   }
 
   handleClick = (name, vic) => {
@@ -76,38 +82,40 @@ export default class Restaurants extends Component {
     window.open("https://www.google.com/maps/dir//" + name + ", +" + vic);
   };
   AddToFav = name => {
-    app.database().ref('favourites').push(name);
+    app
+      .database()
+      .ref("favourites")
+      .push(name);
     alert("Added to favourites: " + name);
-    name = '';
+    name = "";
   };
   CurrentLocDir = (lat, long, name, vic) => {
     window.open(
       "https://www.google.com/maps/dir/?api=1&origin=" +
-      lat +
-      "," +
-      long +
-      "&" +
-      "destination=" +
-      name +
-      ", +" +
-      vic
+        lat +
+        "," +
+        long +
+        "&" +
+        "destination=" +
+        name +
+        ", +" +
+        vic
     );
   };
 
   logout = () => {
     app
-    .auth()
-    .signOut()
-    .then()
-    .catch(err => console.log(err));
+      .auth()
+      .signOut()
+      .then()
+      .catch(err => console.log(err));
   };
-
 
   render() {
     const { restaurants, isLoading, error } = this.state;
     const location = this.state.location;
     const restaurant = restaurants[this.state.index];
-    console.log(restaurants);
+    console.log("dasdads", restaurants);
     if (isLoading) {
       return <p>Loading</p>;
     }
@@ -117,8 +125,8 @@ export default class Restaurants extends Component {
 
     if (restaurants.length === 0) return <div>loading</div>;
     if (this.state.index === 15)
-    this.setState({ index: (this.state.index = 0) });
-
+      this.setState({ index: (this.state.index = 0) });
+    console.log("dsasdad");
     return (
       <div>
         <Navbar />
@@ -131,56 +139,60 @@ export default class Restaurants extends Component {
               >
                 Next option
               </button>
-                <button
-                  className={styles.button}
-                  onClick={() => {
-                    this.CurrentLocDir(
-                      location.lat,
-                      location.long,
-                      restaurant.name,
-                      restaurant.vicinity
-                    );
-                  }}
-                  >
-                    Get directions from my current location
-                  </button>
-                  <button
-                    className={styles.button}
-                    onClick={() => {
-                      this.handleClick(restaurant.name, restaurant.vicinity);
-                    }}
-                    >
-                      Get me directions from anywhere!
-                    </button>
-                    <button
-                      className={styles.button}
-                      onClick={() => {
-                        this.AddToFav(restaurant.name);
-                      }}
-                      >
-                        Add to favourites
-                      </button>
-                      <button className={styles.logoutbutton}
-                        onClick={this.logout.bind(this)}>
-                        Log Out
-                      </button>
-                    </div>
-                  </div>
-                  <div className={styles.main}>
-                    <div className={styles.circle}
-                      onClick={() => this.setState({ index: this.state.index + 1 })}>
-                      <p> {restaurant.name}</p>
-                      <p>{restaurant.vicinity}</p>
-                      <p>
-                        Rating:
-                        {restaurant.rating}
-                        /5
-                      </p>
-                      <img src={restaurant.icon} alt="Restaurant " />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-        }
+              <button
+                className={styles.button}
+                onClick={() => {
+                  this.CurrentLocDir(
+                    location.lat,
+                    location.long,
+                    restaurant.name,
+                    restaurant.vicinity
+                  );
+                }}
+              >
+                Get directions from my current location
+              </button>
+              <button
+                className={styles.button}
+                onClick={() => {
+                  this.handleClick(restaurant.name, restaurant.vicinity);
+                }}
+              >
+                Get me directions from anywhere!
+              </button>
+              <button
+                className={styles.button}
+                onClick={() => {
+                  this.AddToFav(restaurant.name);
+                }}
+              >
+                Add to favourites
+              </button>
+              <button
+                className={styles.logoutbutton}
+                onClick={this.logout.bind(this)}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+          <div className={styles.main}>
+            <div
+              className={styles.circle}
+              onClick={() => this.setState({ index: this.state.index + 1 })}
+            >
+              <p> {restaurant.name}</p>
+              <p>{restaurant.vicinity}</p>
+              <p>
+                Rating:
+                {restaurant.rating}
+                /5
+              </p>
+              <img src={restaurant.icon} alt="Restaurant " />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
